@@ -3,10 +3,10 @@ import matplotlib.pyplot as plt
 from Functions import showgrey
 
 def fftwave(u, v, sz = 128):
-	Fhat = np.zeros([sz, sz])
-	Fhat[u, v] = 1
+	Fhat = np.zeros([sz, sz])      # frequency domain    
+	Fhat[u, v] = 1               
 	
-	F = np.fft.ifft2(Fhat)
+	F = np.fft.ifft2(Fhat)        # inverse fourier transform
 	Fabsmax = np.max(np.abs(F))
 
 	f = plt.figure()
@@ -30,7 +30,7 @@ def fftwave(u, v, sz = 128):
 	amplitude  = 0.0 # Replace by correct expression
 	
 	a2 = f.add_subplot(3, 2, 2)
-	showgrey(np.fft.fftshift(Fhat), False)
+	showgrey(np.fft.fftshift(Fhat), False)      # fftshift shifts the zero-frequency component to the center of the spectrum
 	a2.title.set_text("centered Fhat: (uc, vc) = (%d, %d)" % (uc, vc))
 	
 	a3 = f.add_subplot(3, 2, 3)
