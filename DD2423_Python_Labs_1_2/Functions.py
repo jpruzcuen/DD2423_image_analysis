@@ -93,7 +93,7 @@ def rot(Image, angle = 0, bkg = 0):
 # is REPLACED BY a power spectrum of the form
 # |Fourier|^2 \sim 1/(a + |omega|^2)
 #
-def pow2image(inpic, a = 0.001):
+def pow2image(inpic, a = 0.001):      # when a is low, low frequencies are amplified (smooth image), but when a is large the image retains more high-frequency detail ("magnitude" is almost constant)
 	ftransform = np.fft.fft2(inpic)
 	# Generate the power spectrum in centered frequency coordinates
 	#(note that the factor (pi/umax) corresponds to (2*pi/usize))
