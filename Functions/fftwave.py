@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from Functions import showgrey
+from Functions.Functions import showgrey
 
 def fftwave(u, v, sz = 128):
 	Fhat = np.zeros([sz, sz])
