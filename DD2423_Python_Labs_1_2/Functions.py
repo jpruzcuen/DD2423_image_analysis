@@ -300,6 +300,8 @@ def overlaycurves(img, curves):
 	plt.imshow(rgb)
 	plt.axis('image')
 	plt.axis('off')
+	
+	return rgb
 
 # [ POS, VALUE, ANMS] = LOCMAX8( A) finds the 8-connectedness local
 # maxima of the matrix A and returns a array POS with the positions
