@@ -13,8 +13,26 @@ def find_homography(pts1:np.ndarray, pts2:np.ndarray) -> np.ndarray:
 
     '''
 
-    #TODO: ADD YOUR CODE HERE
-    raise NotImplementedError("Homography estimation yet to be done. Complete the function find_homography and remove this line.")
+    # convert points to homogenous coordinates
+    pts1_h = np.vstack([pts1, np.ones(pts1.shape[1])])  # 3 x N
+    pts2_h = np.vstack([pts2, np.ones(pts2.shape[1])])  # 3 x N
+
+    N = pts1.shape[1]     # shape is (2, N)
+    A = []
+
+    for i in range(N):
+        x, y = pts1[:, i]
+        xb, yb = pts2[:, i]    # x', y' in the other image
+        A.append([x, y, 1, 0, 0, 0, -x*xb, -y*xb, -xb])
+        A.append([0, 0, 0, x, y, 1, -x*yb, -y*yb, -yb])
+
+    A = np.array(A)  # shape: 2N x 9
+    
+    C = np.transpose(A) @ A
+    U, S, Vh = np.linalg.svd(C)
+    v = Vh[8,:]   # the eigenvector corresponding to the eigenvalue of C closest to zero
+    
+    H = v.reshape(3, 3)
 
     return H
 
