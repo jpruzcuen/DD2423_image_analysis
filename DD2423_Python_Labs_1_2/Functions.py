@@ -312,9 +312,9 @@ def overlaycurves(img, curves):
 def locmax8(A):
 	[h, w] = np.shape(A)
 	Aexp = np.zeros((h + 2, w + 2))
-	Aexp[1:h + 1, 1:w + 1] = A
+	Aexp[1:h + 1, 1:w + 1] = A          # nearby points
 	Anms = np.ones(np.shape(A)).astype(bool)
-	Anms = Anms & (A >= Aexp[0:h + 0, 0:w + 0])
+	Anms = Anms & (A >= Aexp[0:h + 0, 0:w + 0])    
 	Anms = Anms & (A >= Aexp[0:h + 0, 1:w + 1])
 	Anms = Anms & (A >= Aexp[0:h + 0, 2:w + 2])
 	Anms = Anms & (A >= Aexp[1:h + 1, 0:w + 0])
@@ -322,7 +322,7 @@ def locmax8(A):
 	Anms = Anms & (A >  Aexp[2:h + 2, 0:w + 0])
 	Anms = Anms & (A >  Aexp[2:h + 2, 1:w + 1])
 	Anms = Anms & (A >  Aexp[2:h + 2, 2:w + 2])
-	[Y, X] = np.where(Anms)
+	[Y, X] = np.where(Anms)      # local maxima is where a point in A have larger values than closest neighbors within radar of 2.
 	Pos = np.concatenate((X.reshape(-1,1), Y.reshape(-1,1)), axis=1)
 	Value = A[Y, X]
 	Anms = np.zeros(np.shape(A))
