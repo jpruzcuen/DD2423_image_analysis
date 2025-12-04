@@ -3,7 +3,7 @@ import scipy
 import cv2
 import matplotlib.pyplot as plt
 
-def draw_matches(pts1, pts2, img1 = None, img2 = None, width = 0):
+def draw_matches(pts1, pts2, img1 = None, img2 = None, width = 0, display=True):
     '''Shows matches pts1 and pts2 above the images img1,img2
     '''
     fig, ax = plt.subplots()
@@ -21,34 +21,38 @@ def draw_matches(pts1, pts2, img1 = None, img2 = None, width = 0):
         ax.plot([pts1[0,i], pts2[0,i] + width*5/4], [pts1[1,i], pts2[1,i]], c=None, lw=0.75)
     ax.scatter(pts1[0,:], pts1[1,:], c='b', s=4.0**2) 
     ax.scatter(pts2[0,:] + width*5/4, pts2[1,:], c='r', s=4.0**2) 
-    fig.tight_layout()
-    plt.show()  
+    
+    if display == True:
+        fig.tight_layout()
+        plt.show()  
 
-def draw_homography(img1, img2, H, save = False):
+def draw_homography(img1, img2, H, save = False, display=True):
     ''' Overlaps img1 and img2 according to the homography H 
     '''
     invH = np.linalg.inv(H)
     h1, w1 = img1.shape[:2]
     h2, w2 = img2.shape[:2]
-    pts1 = np.float32([[0, 0], [0, h1], [w1, h1], [w1, 0]]).reshape(-1, 1, 2)
-    pts2 = np.float32([[0, 0], [0, h2], [w2, h2], [w2, 0]]).reshape(-1, 1, 2)
-    pts2_ = cv2.perspectiveTransform(pts2, invH)
+    pts1 = np.float32([[0, 0], [0, h1], [w1, h1], [w1, 0]]).reshape(-1, 1, 2)  # corners?
+    pts2 = np.float32([[0, 0], [0, h2], [w2, h2], [w2, 0]]).reshape(-1, 1, 2)  # corners?
+    pts2_ = cv2.perspectiveTransform(pts2, invH)    # pts2_ are the corners of img2 transformed into img1’s coordinate frame.
     pts = np.concatenate((pts1, pts2_), axis=0)
     #Finding the minimum and maximum coordinates
-    [xmin, ymin] = np.int32(pts.min(axis=0).ravel() - 0.5)
+    [xmin, ymin] = np.int32(pts.min(axis=0).ravel() - 0.5)  # bounding box of the warped images (large enough image to hold both ims)
     [xmax, ymax] = np.int32(pts.max(axis=0).ravel() + 0.5)
     t = [-xmin, -ymin]
     Ht = np.array([[1, 0, t[0]], [0, 1, t[1]], [0, 0, 1]])
     #Warping the first image on the second image using Homography Matrix
     result = np.zeros((ymax-ymin, xmax-xmin, 3), np.uint8)
-    result[:,:,2] = cv2.warpPerspective(img2, Ht.dot(invH), (xmax-xmin, ymax-ymin))
-    result[t[1]:h1+t[1], t[0]:w1+t[0], 0] = img1
+    result[:,:,2] = cv2.warpPerspective(img2, Ht.dot(invH), (xmax-xmin, ymax-ymin))   # warp img2 using the homography
+    result[t[1]:h1+t[1], t[0]:w1+t[0], 0] = img1    # overlay
     result[t[1]:h1+t[1], t[0]:w1+t[0], 1] = img1
     if save:
-        cv2.imwrite('homography.jpg', result) #Uncomment to save the image
-    plt.imshow(result)
-    plt.axis('off')
-    plt.show()
+        cv2.imwrite('homography.jpg', result) 
+        
+    if display==True:
+        plt.imshow(result)
+        plt.axis('off')
+        plt.show()
     return
 
 def draw_2d_points(img,pts,colors=None):

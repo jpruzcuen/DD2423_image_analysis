@@ -82,10 +82,30 @@ def find_homography_RANSAC(pts1:np.ndarray, pts2:np.ndarray, niter:int = 100, th
     
     '''
 
-    #TODO: ADD YOUR CODE HERE
-    raise NotImplementedError("RANSAC Based homography yet to be done. Complete the function find_homography_RANSAC and remove this line.")
+    N = pts1.shape[1]  # needs to be at least 4 matches
+    
+    Hbest = None
+    best_ninliers = -1
+    best_inlier_idxs = None
 
-    return Hbest, ninliers, errors
+    for _ in range(niter):
+        # minimal required sample: 4, without duplicates
+        sample_idxs = np.random.choice(N, size=4, replace=False)    # randomly sample 4 match indices (same in both images)
+        pts1_sel = pts1[:, sample_idxs]
+        pts2_sel = pts2[:, sample_idxs]     
+ 
+        H = find_homography(pts1_sel, pts2_sel)
+        
+        # evaluate H against the full dataset (i.e. count the number of inliers among all features using homography H)
+        ninliers, errors = count_homography_inliers(
+            H=H, pts1=pts1, pts2=pts2, thresh=thresh
+        )
+        
+        if ninliers > best_ninliers:
+            best_ninliers = ninliers
+            Hbest = H
+
+    return Hbest, best_ninliers, errors
 
 
 def synthetic_example(RANSAC = False):

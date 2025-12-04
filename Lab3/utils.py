@@ -15,7 +15,7 @@ def generate_2d_points(num:int = 500, noutliers:int = 100, noise:float = 1.0, ve
             pts2: a 2xnum array containing the coordinates of the points projections in the second camera. Points are indexed as in pts1.
             H: a 3x3 matrix containing the theoretical homography between the first and the second camera.
     '''
-    pts3d = random_3d_points(num = num, spread = 1.0)
+    pts3d = random_3d_points(num = num, spread = 1.0)   # spread is 1.0, everything outside counted as an outlier?
     pts3d[2,:] = 0
     P1, P2 = generate_projections(distance = 6.0, vergence = vergence, focal = focal)
     pts1 = project_points(P1, pts3d) + np.random.randn(2, num)*noise
